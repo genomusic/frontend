@@ -4,3 +4,10 @@ export const setToken = (token) => {
     token
   };
 };
+
+export const setGenomelinkToken = (token) => {
+  return {
+    type: 'SET_GENE_TOKEN',
+    token
+  };
+};

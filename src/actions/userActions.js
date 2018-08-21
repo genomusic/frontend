@@ -34,6 +34,42 @@ export const fetchUser = (accessToken) => {
   };
 };
 
+export const getGenomelinkUrlSuccess = (url) => {
+  return {
+    type: 'GET_URL_SUCCESS',
+    url
+  };
+};
+
+export const getGenomelinkUrlError = () => {
+  return {
+    type: 'GET_URL_ERROR'
+  };
+};
+
+
+export const getGenomelinkUrl = () => {
+
+  return dispatch => {
+    const request = new Request('http://localhost:5000/get_url', {
+      // headers: new Headers({
+      //   'Authorization': 'Bearer ' + accessToken
+      // })
+    });
+
+    fetch(request).then(res => {
+      // send user back to homepage if no token
+
+      return res.json();
+    }).then(res => {
+      console.log('RESPONSE URLLL', res.url)
+      dispatch(getGenomelinkUrlSuccess(res.url));
+    }).catch(err => {
+      dispatch(fetchUserError(err));
+    });
+  };
+};
+
 export const addSongToLibrarySuccess = (songId) => {
   return {
     type: 'ADD_SONG_TO_LIBRARY_SUCCESS',

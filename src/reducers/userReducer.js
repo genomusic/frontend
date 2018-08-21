@@ -9,6 +9,13 @@ export const userReducer = (state = {}, action) => {
       fetchUserError: false
     };
 
+    case "GET_URL_SUCCESS":
+      return {
+        ...state,
+        url: action.url,
+        fetchUserError: false
+      };
+
   case "FETCH_USER_ERROR":
     return {
       ...state,

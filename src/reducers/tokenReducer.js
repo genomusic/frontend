@@ -7,6 +7,12 @@ export const tokenReducer = (state = {}, action) => {
       token: action.token
     };
 
+    case "SET_GENE_TOKEN":
+      return {
+        ...state,
+        genomelinkToken: action.token
+      };
+
   default:
     return state;
   }

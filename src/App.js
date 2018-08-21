@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { fetchUser } from './actions/userActions';
-import { setToken } from './actions/tokenActions';
+import { setToken, setGenomelinkToken } from './actions/tokenActions';
 import { playSong, stopSong, pauseSong, resumeSong } from './actions/songActions';
 import './App.css';
 import Particles from 'react-particles-js';
@@ -30,17 +30,27 @@ class App extends Component {
 	  while ( e = r.exec(q)) {
 	    hashParams[e[1]] = decodeURIComponent(e[2]);
 	  }
-
-	  if(hashParams.access_token) {
-	    this.props.setToken(hashParams.access_token);
+    var url = new URL(window.location);
+    console.log('PARAMSS', hashParams.access_token)
+	  if(hashParams.access_token || localStorage.getItem('spotifyToken')) {
+	    console.log('WHAT HAPPENED', hashParams.access_token)
+      if(hashParams.access_token) localStorage.setItem('spotifyToken', hashParams.access_token)
+	    this.props.setToken(hashParams.access_token || localStorage.getItem('spotifyToken'));
 	  }
+
+	  const hasGeneToken = url.searchParams.get("genomelink_token")
+
+    if(hasGeneToken || localStorage.getItem('genomelinkToken')) {
+      localStorage.setItem('genomelinkToken', hasGeneToken)
+      this.props.setGenomelinkToken(hasGeneToken || localStorage.getItem('genomelinkToken'));
+    }
 
 	}
 
 	componentWillReceiveProps(nextProps) {
-	  if(nextProps.token) {
-	    this.props.fetchUser(nextProps.token);
-	  };
+	  // if(nextProps.token) {
+	  //   this.props.fetchUser(nextProps.token);
+	  // };
 
 	  if(this.audio !== undefined) {
 	    this.audio.volume = nextProps.volume / 100;
@@ -87,7 +97,7 @@ class App extends Component {
 	}
 
 	render() {
-		if(this.props.token){
+		if(this.props.canLogin){
             return (
 
 				<div className='App'>
@@ -227,6 +237,7 @@ App.propTypes = {
 const mapStateToProps = (state) => {
 
   return {
+    canLogin: state.tokenReducer.token && state.tokenReducer.genomelinkToken,
     token: state.tokenReducer.token,
     volume: state.soundReducer.volume
   };
@@ -238,6 +249,7 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators({
     fetchUser,
     setToken,
+    setGenomelinkToken,
     playSong,
     stopSong,
     pauseSong,
